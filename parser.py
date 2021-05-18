@@ -1,5 +1,6 @@
-from typing import Optional
 import asyncio
+from typing import Optional
+
 import httpx
 from bs4 import BeautifulSoup
 
@@ -35,11 +36,12 @@ class Parser:
 
     @staticmethod
     def prepare_model_name(brand, row_model_name) -> Optional[str]:
+        # список запрещенных слов.
         incorrect_names = [
             "(автомобиль)", "ряд", "Шаблон",
             "автомобиля", "(автомобильная марка)", "автомобили", "автомобилей"
         ]
-        # Определяем название модели
+
         name_items = row_model_name.split(" ")
 
         if len(name_items) == 1:
@@ -98,15 +100,10 @@ class Parser:
                     if model:
                         models.append(model)
 
-            try:
-                collect_data[brand] = models
-            except:
-                print(brand)
-                continue
+            collect_data[brand] = models
 
         with open("cars.json", "w") as file:
             file.write(str(collect_data))
-
 
 
 if __name__ == '__main__':
