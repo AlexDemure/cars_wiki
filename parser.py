@@ -28,7 +28,7 @@ class Parser:
         brand_items = row_brand_name.split(" ")
 
         if len(brand_items) > 1:
-            brand = brand_items[1]
+            brand = " ".join(brand_items[1:])
         else:
             brand = row_brand_name
 
@@ -38,7 +38,7 @@ class Parser:
     def prepare_model_name(brand, row_model_name) -> Optional[str]:
         # список запрещенных слов.
         incorrect_names = [
-            "(автомобиль)", "ряд", "Шаблон",
+            "(автомобиль)", "ряд", "Шаблон", "Хронология",
             "автомобиля", "(автомобильная марка)", "автомобили", "автомобилей"
         ]
 
@@ -53,11 +53,15 @@ class Parser:
                 model = row_model_name if row_model_name not in incorrect_names else None
 
         else:
+            if len(name_items) >= 3:
+                if " ".join(name_items[:2]) == brand:
+                    name_items = name_items[2:]
+
             for index, item in enumerate(name_items):
                 if len(item.split(":")) == 2:
                     return None
 
-                if item in incorrect_names:
+                if item in incorrect_names or item == brand:
                     name_items.pop(index)
 
             model = " ".join(name_items)
